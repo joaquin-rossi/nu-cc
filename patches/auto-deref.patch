@@ -1,0 +1,18 @@
+diff a/tccgen.c b/tccgen.c
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -5115,8 +5116,13 @@
+         } else if (tok == '.' || tok == TOK_ARROW || tok == TOK_CDOUBLE) {
+             int qualifiers;
+             /* field */ 
+-            if (tok == TOK_ARROW) 
++            if (tok == TOK_ARROW) {
+                 indir();
++            } else if (tok == '.') {
++                if ((vtop->type.t & VT_BTYPE) == VT_PTR) {
++                    indir();
++                }
++            }
+             qualifiers = vtop->type.t & (VT_CONSTANT | VT_VOLATILE);
+             test_lvalue();
+             gaddrof();
