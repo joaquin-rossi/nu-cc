@@ -1,0 +1,40 @@
+# vim:ft=bash
+version=0.9.27
+
+function apply {
+	cd tcc-$version
+	patch -p1 < ../patches/$1.patch
+}
+
+function build {
+	cd tcc-$version
+	./configure --prefix="$(realpath build)"
+	make
+	make install
+	ln -sf tcc-$version/build/bin/tcc ../tcc
+}
+
+function clean {
+	rm -rf tcc tcc-$version
+}
+
+function init {
+	wget http://download.savannah.gnu.org/releases/tinycc/tcc-$version.tar.bz2
+	tar xvf tcc-$version.tar.bz2 && rm tcc-$version.tar.*
+
+	cd tcc-$version
+	patch -p1 << EOF
+diff a/lib/bcheck.c b/lib/bcheck.c
+--- a/lib/bcheck.c
++++ b/lib/bcheck.c
+@@ -47,7 +47,7 @@
+ /* #define BOUND_STATIC */
+ 
+ /* use malloc hooks. Currently the code cannot be reliable if no hooks */
+-#define CONFIG_TCC_MALLOC_HOOKS
++// #define CONFIG_TCC_MALLOC_HOOKS
+ #define HAVE_MEMALIGN
+ 
+ #if defined(__FreeBSD__) \\
+EOF
+}
